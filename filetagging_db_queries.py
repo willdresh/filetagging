@@ -21,7 +21,7 @@ def queryDatabase(qry, func=None):
             if (func != None):
                 result[1]=func(cnx,cur)
         except mysql.connector.errors.IntegrityError as ierr:
-            raise Exception(ierr); #Let applyTag handle this one
+            raise Exception(ierr); #Let caller handle this one
         except mysql.connector.Error as err:
             exception=err;
         finally: #Close cursor connection
@@ -55,7 +55,6 @@ def getTagID(tagName):
 
     return res
 
-
 d_dbg_createTag=False
 def createTag(tagName):
     query=queryDatabase(f"INSERT INTO TAGS VALUES (NULL, '{tagName}')",
@@ -68,6 +67,21 @@ def createTag(tagName):
         print(f"result of createTag({tagName})= {res}")
 
     return res
+
+d_dbg_getTagName=False
+def getTagName(tagId):
+    query=queryDatabase(f"SELECT name FROM TAGS WHERE id={tagId}",
+            lambda cnx,cur: cur.fetchone());
+
+    res=None
+    if query[1] != None:
+        res=query[1][0];
+
+    if d_dbg_all or d_dbg_getTagName:
+        print(f"Result of getTagName({tagId})={res}")
+
+    return res;
+
 
 d_dbg_getFileID=False
 def getFileID(fileName):
