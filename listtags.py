@@ -13,7 +13,24 @@ l_dbg_all=False
 dbqFilename='filetagging_db_queries.py'
 exec(compile(open(dbqFilename).read(),dbqFilename,'exec'))
 
-l_dbg_listAllTags=True
+l_dbg_listTagNames=False
+def listTagNames(tags):
+    result=[]
+    nextTName=None;
+    for tag in tags:
+        if len(tag) == 2:
+            nextTName=tag[1]
+            if l_dbg_listTagNames or d_dbg_all or l_dbg_all:
+                print(f"Appending tag tag[1]={tag}[1]={tag[1]}...");
+        else:
+            nextTName=getTagName(tag[0])
+            if l_dbg_listTagNames or d_dbg_all or l_dbg_all:
+                print(f"Appending tag getTagName(tag[0])=getTagName({tag}[0])=getTagName({tag[0]})=  {nextTName}");
+        result.append(nextTName);
+
+    return result;
+
+l_dbg_listAllTags=False
 def listAllTags(file=None):
 
     #if no file is specified, list all available tags
@@ -26,7 +43,7 @@ def listAllTags(file=None):
             fid=int(file)
             queryStr=f"SELECT tag FROM FILE_TAGS WHERE fileId={fid};"
         except ValueError:
-            queryStr=f"SELECT tag FROM FILE_TAGS WHERE fileId={getFileID(file)};"
+            queryStr=f"SELECT tag FROM FILE_TAGS WHERE fileId={getFileID(os.path.abspath(file))};"
 
     if l_dbg_listAllTags or d_dbg_all or l_dbg_all:
         print(f"listAllTags: queryStr={queryStr}");
@@ -39,5 +56,8 @@ def listAllTags(file=None):
 
     return query[1];
 
-if (len(sys.argv) < 2): print(f"{listAllTags()}")
-else: print(f"{listAllTags(sys.argv[1])}")
+myTags=None
+if (len(sys.argv) < 2): myTags=listAllTags()
+else: myTags=listAllTags(sys.argv[1])
+
+print(f"{listTagNames(myTags)}")
