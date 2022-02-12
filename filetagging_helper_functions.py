@@ -11,7 +11,7 @@ def handleInvalidArguments(msg="",thenExit=True,exitCode=1):
         reportError(f"Exiting with code {exitCode}\n")
         exit(exitCode)
 
-def handleDatabaseError(err, thenExit=True, exitCode=2):
+def handleDatabaseError(err, thenExit=False, exitCode=2):
     reportError(f"Database Error: {err}\n")
     if thenExit:
         reportError(f"Exiting with code {exitCode}\n")

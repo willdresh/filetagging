@@ -5,13 +5,13 @@ helperFilename='filetagging_helper_functions.py'
 exec(compile(open(helperFilename).read(),helperFilename,'exec'))
 
 
-
 d_dbg_all=False
-def queryDatabase(qry, func=None):
+def queryDatabase(qry, func=None, callback_ExceptionType=mysql.connector.Error, callback_ExceptionHandler=handleDatabaseError):
     #Connect to mysql database
     cnx = mysql.connector.connect(user='ragnar', host='localhost', database='filetagging');
     result=[None,None];
-    exception=None;
+    localException = None;
+    remoteException = None;
 
     try:
         cur = cnx.cursor(buffered=True);
@@ -20,23 +20,29 @@ def queryDatabase(qry, func=None):
             result[0]=cur.execute(qry)
             if (func != None):
                 result[1]=func(cnx,cur)
-        except mysql.connector.errors.IntegrityError as ierr:
-            raise Exception(ierr); #Let caller handle this one
-        except mysql.connector.Error as err:
-            exception=err;
+        except callback_ExceptionType as rerr:
+            remoteException=rerr;
+        except mysql.connector.Error as lerr:
+            localException=lerr;
+        #except mysql.connector.errors.IntegrityError as ierr:
+            #exc_raised=None; #Let caller handle this one
+            #raise ierr; 
         finally: #Close cursor connection
             cur.close()
+            if remoteException != None:
+                callback_ExceptionHandler(remoteException);
 
-    except mysql.connector.Error as err:
-        exception=err;
+    except mysql.connector.Error as lerr:
+        localException=lerr;
 
-    finally: #Close connection to mysql
+    finally:
+        # Close connection to database, then deal with any exceptions
         cnx.close()
-        if (exception != None):
-            handleDatabaseError(exception)
+        if (localException != None):
+            handleDatabaseError(localException,True)
 
     if result[0] == None:
-        result[0]=(exception != None);
+        result[0]=(localException != None);
 
     return tuple(result)
 
@@ -138,15 +144,20 @@ def addDir(dirPath):
 
     return res;
 
-d_dbg_applyTag=False
-def applyTag(fileID, tagID):
-    try:
-        query_s=f"INSERT INTO FILE_TAGS VALUES ({tagID}, {fileID})";
-        if d_dbg_all or d_dbg_applyTag:
-            print(f"applyTag query: {query_s}")
+# Default action when tag has already been applied: do nothing
+def default_TagAlreadyApplied(exc=None):
+    return None;
 
-        query=queryDatabase(f"INSERT INTO FILE_TAGS VALUES ({tagID}, {fileID}, {dirID})",
-                lambda cnx,cur: cnx.commit())
-    except Exception as ierr:
-        handleDatabaseError(ierr,False)
+d_dbg_applyTag=False
+def applyTag(fileID, tagID, dirID, callback_TagAlreadyApplied=default_TagAlreadyApplied):
+    query_s=f"INSERT INTO FILE_TAGS VALUES ({tagID}, {fileID}, {dirID})"
+    if d_dbg_all or d_dbg_applyTag:
+        print(f"applyTag query: {query_s}")
+
+    query=queryDatabase(
+            query_s,
+            lambda cnx,cur: cnx.commit(),
+            mysql.connector.errors.IntegrityError,
+            callback_TagAlreadyApplied
+        )
 

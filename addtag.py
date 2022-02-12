@@ -11,6 +11,10 @@ exec(compile(open(dbqFilename).read(),dbqFilename,'exec')) #include "filetagging
 def printHelpText():
     print('Syntax:\taddtag [-v] <filename> <tag> [additional-tag] ... [additional-tagN]\n')
 
+def reportTagAlreadyApplied(exc):
+    print('\tNon-Fatal Exception: requested tag already applied');
+    print('\tContinuing...');
+
 # The following "printXtoY" methods are only called when running in verbose mode
 def printAddDirToDBMessage(target_dir):
     print(f"Adding new directory {target_dir} to database");
@@ -77,5 +81,8 @@ for tagName in taglist:
         tags.append(createTag(tagName));
 
 for tag in tags:
-    if verbose: printAddTagToFileMessage(tag, target);
-    applyTag(fileID,tag)
+    if verbose:
+        printAddTagToFileMessage(tag, target);
+        applyTag(fileID,tag,dirID,reportTagAlreadyApplied);
+    else:
+        applyTag(fileID,tag,dirID)
