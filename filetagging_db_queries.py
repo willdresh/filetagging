@@ -38,7 +38,8 @@ def queryDatabase(qry, func=None):
     if result[0] == None:
         result[0]=(exception != None);
 
-    return list(result)
+    return tuple(result)
+
 
 d_dbg_getTagID=False
 def getTagID(tagName):
