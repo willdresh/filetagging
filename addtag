@@ -10,6 +10,13 @@ exec(compile(open(dbqFilename).read(),dbqFilename,'exec')) #this is a "#include"
 at_auxFilename='aux_addtag.py'
 exec(compile(open(at_auxFilename).read(),at_auxFilename,'exec')) #this is a "#include" directive
 
+getStandardizedFile=os.path.abspath
+getStandardizedDirectory=os.path.dirname
+
+###########################################
+### BEGIN COMMAND LINE INPUT VALIDATION ###
+###          (and assignment)           ###
+###########################################
 
 verbose=False
 
@@ -22,18 +29,23 @@ elif sys.argv[1] in ['--verbose','-v']:
     verbose=True
     del sys.argv[1] #Delete the -v switch from the argument list, so the rest of the args line up
 
-# At least 2 arguments required
+# At least 2 arguments required (not counting "-v" if it was specified)
 if len(sys.argv) < 2:
     printHelpText();
     handleInvalidArguments("too few arguments");
 
 
-target=os.path.abspath(sys.argv[1]);
-target_dir=os.path.dirname(target);
+target=getStandardizedFile(sys.argv[1]);
+target_dir=getStandardizedDirectory(target);
 
 if os.path.isfile(target)==False:
     handleInvalidArguments(f"{sys.argv[1]} is not a valid file");
 # (no need to check if target_dir is a valid dir, because if it isn't, then target isn't a valid file)
+
+###########################################
+###  END COMMAND LINE INPUT VALIDATION  ###
+###          (and assignment)           ###
+###########################################
 
 # Query MySQL database to find the IDs of both the file and its directory
 # if the file and/or dir are not in the database, add them
