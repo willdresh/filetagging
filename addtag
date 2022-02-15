@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import os
 import sys
 
@@ -20,7 +19,7 @@ verbose=False
 
 # If user asked for help, print help text and exit successfully
 if sys.argv[1] in ['--help','-h']:
-    printHelpText();
+    printAddTagHelpText();
     exit(0);
 # Check if verbose switch was specified
 elif sys.argv[1] in ['--verbose','-v']:
@@ -36,7 +35,7 @@ if len(sys.argv) < 2:
 target=getStandardizedFile(sys.argv[1]);
 target_dir=getStandardizedDirectory(target);
 
-if os.path.isfile(target)==False:
+if chkValidFileStandardized(target)==False:
     handleInvalidArguments(f"{sys.argv[1]} is not a valid file");
 # (no need to check if target_dir is a valid dir, because if it isn't, then target isn't a valid file)
 

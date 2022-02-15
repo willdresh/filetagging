@@ -90,17 +90,11 @@ def getTagName(tagId):
     return res;
 
 
-# Default action when file was not found in the database: do nothing
-def default_FileNotInDatabase(exc=None):
-    return None;
-
 d_dbg_getFileID=False
-def getFileID(fileName, callback_FileNotInDatabase=default_FileNotInDatabase):
+def getFileID(fileName):
     query=queryDatabase(
             f"SELECT id FROM TAGGED_FILES WHERE name='{fileName}';",
             lambda cnx, cur: cur.fetchone(),
-            mysql.connector.errors.Error,
-            callback_FileNotInDatabase
             )
 
     res = None
@@ -169,3 +163,28 @@ def applyTag(fileID, tagID, dirID, callback_TagAlreadyApplied=default_TagAlready
             callback_TagAlreadyApplied
         )
 
+
+d_dbg_removeTag=False
+def removeTag(fileId, tagId):
+    query_s=f"DELETE FROM FILE_TAGS WHERE tag={tagId} AND fileId={fileId}"
+    if d_dbg_all or d_dbg_removeTag:
+        print(f"Debugging call to removeTag({fileId}, {tagId})");
+        print(f"\tremoveTag query: {query_s}");
+
+    query=queryDatabase(
+            query_s,
+            lambda cnx,cur: cnx.commit())
+
+d_dbg_removeTags=False
+def removeTags(fileId, tagIds):
+    if (len(tagIds) == 1): return removeTag(fileId, next(iter(tagIds)));
+
+    taglist_s=f"({','.join([str(tid) for tid in tagIds])})"
+    query_s=f"DELETE FROM FILE_TAGS WHERE tag IN {taglist_s} AND fileId={fileId}"
+    if d_dbg_all or d_dbg_removeTag:
+        print(f"Debugging call to removeTags({fileId}, {tagIds})");
+        print(f"\tremoveTags query: {query_s}");
+
+    query=queryDatabase(
+            query_s,
+            lambda cnx,cur: cnx.commit())

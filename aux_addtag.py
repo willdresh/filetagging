@@ -1,6 +1,6 @@
 
 
-def printHelpText():
+def printAddTagHelpText():
     print('Syntax:\taddtag [-v] <filename> <tag> [additional-tag] ... [additional-tagN]\n')
 
 def reportTagAlreadyApplied(exc):
