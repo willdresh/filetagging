@@ -4,7 +4,7 @@
 import os
 import sys
 
-def printHelpText():
+def printListTagsHelpText():
     print('Syntax: listtags < -a | filename>\n');
 
 l_dbg_all=False
@@ -15,23 +15,26 @@ exec(compile(open(dbqFilename).read(),dbqFilename,'exec'))
 
 l_dbg_listTagNames=False
 def listTagNames(tags):
+    if l_dbg_listTagNames or master_dbg_all or l_dbg_all: print(f"Debugging call to listTagNames(tags={tags})")
+
     result=[]
     nextTName=None;
     for tag in tags:
         if len(tag) == 2:
             nextTName=tag[1]
-            if l_dbg_listTagNames or d_dbg_all or l_dbg_all:
-                print(f"Appending tag tag[1]={tag}[1]={tag[1]}...");
+            if l_dbg_listTagNames or master_dbg_all or l_dbg_all: print(f"\tAppending tag tag[1]={tag}[1]={tag[1]}...");
         else:
             nextTName=getTagName(tag[0])
-            if l_dbg_listTagNames or d_dbg_all or l_dbg_all:
-                print(f"Appending tag getTagName(tag[0])=getTagName({tag}[0])=getTagName({tag[0]})=  {nextTName}");
+            if l_dbg_listTagNames or master_dbg_all or l_dbg_all: print(f"\tAppending tag getTagName(tag[0])=getTagName({tag}[0])=getTagName({tag[0]})=  {nextTName}");
+
         result.append(nextTName);
 
-    return result;
+    return set(result);
 
 l_dbg_listAllTags=False
 def listAllTags(file=None):
+    if l_dbg_listAllTags or master_dbg_all or l_dbg_all:
+        print(f"Debugging call to listAllTags(file={file})");
 
     #if no file is specified, list all available tags
     if (file == None):
@@ -45,19 +48,30 @@ def listAllTags(file=None):
         except ValueError:
             queryStr=f"SELECT tag FROM FILE_TAGS WHERE fileId={getFileID(os.path.abspath(file))};"
 
-    if l_dbg_listAllTags or d_dbg_all or l_dbg_all:
-        print(f"listAllTags: queryStr={queryStr}");
+    if l_dbg_listAllTags or master_dbg_all or l_dbg_all:
+        print(f"\tlistAllTags: queryStr={queryStr}");
 
     query=queryDatabase(queryStr,
             lambda cnx,cur: cur.fetchall());
 
-    if l_dbg_listAllTags or d_dbg_all or l_dbg_all:
-        print(f"listAllTags: result={query[1]}");
+    if l_dbg_listAllTags or master_dbg_all or l_dbg_all:
+        print(f"\tlistAllTags: result={query[1]}");
 
-    return query[1];
+    return set(query[1]);
 
-myTags=None
-if (len(sys.argv) < 2): myTags=listAllTags()
-else: myTags=listAllTags(sys.argv[1])
 
-print(f"{listTagNames(myTags)}")
+myTags=set()
+
+l_dbg_forloop=False
+# Remember, this script's filename is always sys.argv[0], so len(sys.argv) returns
+# the number of arguments PLUS ONE (for the filename)
+# So therefore "if len(sys.argv) < 2" means "If no arguments were passed"
+if (len(sys.argv) < 2 or sys.argv[1] == '-a'):
+    myTags=listAllTags()
+else:
+    for arg in sys.argv[1:len(sys.argv)]:
+        if l_dbg_forloop or master_dbg_all or l_dbg_all: print(f"Going to append listAllTags({arg}) to myTags");
+        myTags |= listAllTags(arg)
+
+
+print(f"{set(listTagNames(myTags))}")
