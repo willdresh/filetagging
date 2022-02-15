@@ -32,15 +32,26 @@ class FiletagConfig:
         #end def __init__
 
         def Connect(self):
-            match self.dbType:
-                case DatabaseType.MySQL:
-                    if usePassword:
-                        return mysql.connector.connect(user=self.username,password=self.password,host=self.host,database=self.dbName)
-                    else:
-                        return mysql.connector.connect(user=self.username,host=self.host,database=self.dbName);
+
+            #The following lines don't work,
+            #evidently Python doesn't really support switches
+            # Why is Python so popular again?
+            #match self.dbType:
+                #case DatabaseType.MySQL:
+                    #if usePassword:
+                        #return mysql.connector.connect(user=self.username,password=self.password,host=self.host,database=self.dbName)
+                    #else:
+                        #return mysql.connector.connect(user=self.username,host=self.host,database=self.dbName);
                     #end if-else
                 #end case DatabaseType.MySQL
             #end match
+
+            if self.dbType == FiletagConfig.DatabaseConfig.DatabaseType.MySQL:
+                if self.usePassword:
+                    return mysql.connector.connect(user=self.username,password=self.password,host=self.host,database=self.dbName)
+                else:
+                    return mysql.connector.connect(user=self.username,host=self.host,database=self.dbName);
+
         #end def Connect
     #end class DatabaseConfig
 
@@ -49,7 +60,7 @@ class FiletagConfig:
 
     dbConfig=DatabaseConfig();
 
-    def __init(self,
+    def __init__(self,
             _dbConfig=DatabaseConfig()):
         self.dbConfig=_dbConfig;
     #end def __init__
