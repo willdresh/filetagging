@@ -162,7 +162,32 @@ def applyTag(fileID, tagID, dirID, callback_TagAlreadyApplied=default_TagAlready
             mysql.connector.errors.IntegrityError,
             callback_TagAlreadyApplied
         )
+# End def applyTag
 
+d_dbg_applyTags=False
+def applyTags(fileID, tagIDs, dirID, callback_TagAlreadyApplied=default_TagAlreadyApplied):
+    query_s="INSERT INTO FILE_TAGS VALUES "
+    prependComma=False
+    for tagID in tagIDs:
+        if prependComma:
+            query_s += ","
+        else:
+            prependComma=True
+
+        query_s += f"({tagID}, {fileID}, {dirID})";
+    #end for
+    query_s += ";";
+
+    if d_dbg_all or d_dbg_applyTags:
+        print(f"applyTags query: {query_s}")
+
+    query=queryDatabase(
+            query_s,
+            lambda cnx,cur: cnx.commit(),
+            mysql.connector.errors.IntegrityError,
+            callback_TagAlreadyApplied
+        )
+# End def applyTags
 
 d_dbg_removeTag=False
 def removeTag(fileId, tagId):

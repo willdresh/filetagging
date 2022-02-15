@@ -72,9 +72,10 @@ for tagName in taglist:
         if verbose: printAddTagToDBMessage(tagName);
         tags.append(createTag(tagName));
 
-for tag in tags:
-    if verbose:
-        printAddTagToFileMessage(tag, target);
-        applyTag(fileID,tag,dirID,reportTagAlreadyApplied);
-    else:
-        applyTag(fileID,tag,dirID)
+applyTags(fileID,tags,dirID,reportTagAlreadyApplied);
+#for tag in tags:
+    #if verbose:
+        #printAddTagToFileMessage(tag, target);
+        #applyTag(fileID,tag,dirID,reportTagAlreadyApplied);
+    #else:
+        #applyTag(fileID,tag,dirID)
