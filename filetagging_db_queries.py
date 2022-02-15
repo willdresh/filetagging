@@ -4,11 +4,17 @@ import mysql.connector
 helperFilename='filetagging_helper_functions.py'
 exec(compile(open(helperFilename).read(),helperFilename,'exec'))
 
+#include 'local_config.py'
+localconfigFilename='local_config.py'
+exec(compile(open(localconfigFilename).read(),localconfigFilename,'exec'))
+
+dbqConfig=myLocalConfig;
 
 d_dbg_all=False
 def queryDatabase(qry, func=None, callback_ExceptionType=mysql.connector.Error, callback_ExceptionHandler=handleDatabaseError):
     #Connect to mysql database
-    cnx = mysql.connector.connect(user='ragnar', host='localhost', database='filetagging');
+    cnx=dbqConfig.db.Connect()
+    #cnx = mysql.connector.connect(user='ragnar', host='localhost', database='filetagging');
     result=[None,None];
     localException = None;
     remoteException = None;
