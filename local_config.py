@@ -9,4 +9,5 @@ myLocalConfig=FiletagConfig(
             DatabaseType.MySQL,
             "filetagging",
             "ragnar",
-            "localhost",
+            "localhost")
+        )
