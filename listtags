@@ -1,70 +1,11 @@
 #!/usr/bin/env python
 
-
 import os
 import sys
 
-def printListTagsHelpText():
-    print('Syntax: listtags < -a | filename>\n');
-
-l_dbg_all=False
-
-#include "filetagging_db_queries.py"
-dbqFilename='filetagging_db_queries.py'
-exec(compile(open(dbqFilename).read(),dbqFilename,'exec'))
-
-l_dbg_listTagNames=False
-def listTagNames(tags):
-    if l_dbg_listTagNames or d_dbg_all or l_dbg_all: print(f"Debugging call to listTagNames(tags={tags})")
-
-    if (tags == None):
-        return set();
-
-    result=set()
-    nextTName=None;
-    for tag in tags:
-        if len(tag) == 2:
-            nextTName=tag[1]
-            if l_dbg_listTagNames or d_dbg_all or l_dbg_all: print(f"\tAppending tag tag[1]={tag}[1]={tag[1]}...");
-        else:
-            nextTName=getTagName(tag[0])
-            if l_dbg_listTagNames or d_dbg_all or l_dbg_all: print(f"\tAppending tag getTagName(tag[0])=getTagName({tag}[0])=getTagName({tag[0]})=  {nextTName}");
-
-        result.add(nextTName);
-
-    return result;
-
-l_dbg_listAllTags=False
-def listAllTags(file=None):
-    if l_dbg_listAllTags or d_dbg_all or l_dbg_all:
-        print(f"Debugging call to listAllTags(file={file})");
-
-    #if no file is specified, list all available tags
-    if (file == None):
-        queryStr=f"SELECT * FROM TAGS;"
-    else:
-        fid=None
-        try:
-            fid=int(file)
-            queryStr=f"SELECT tag FROM FILE_TAGS WHERE fileId={fid};"
-        except ValueError:
-            queryStr=f"SELECT tag FROM FILE_TAGS WHERE fileId={getFileID(os.path.abspath(file))};"
-
-    if l_dbg_listAllTags or d_dbg_all or l_dbg_all:
-        print(f"\tlistAllTags: queryStr={queryStr}");
-
-    query=queryDatabase(queryStr,
-            lambda cnx,cur: cur.fetchall());
-
-    res=set(query[1]);
-    if res==None:
-        res=set();
-
-    if l_dbg_listAllTags or d_dbg_all or l_dbg_all:
-        print(f"\tlistAllTags: result={res}");
-
-    return res;
-
+#include "aux_listtags.py"
+ltAuxFilename='aux_listtags.py'
+exec(compile(open(ltAuxFilename).read(),ltAuxFilename,'exec'))
 
 myTags=set()
 
@@ -76,8 +17,10 @@ if (len(sys.argv) < 2 or sys.argv[1] == '-a'):
     myTags=listAllTags()
 else:
     for arg in sys.argv[1:len(sys.argv)]:
-        if l_dbg_forloop or d_dbg_all or l_dbg_all: print(f"Going to append listAllTags({arg}) to myTags");
-        myTags |= listAllTags(arg)
+        tagsForArg=listAllTags(arg)
+
+        if l_dbg_forloop or d_dbg_all or l_dbg_all: print(f"Going to add listAllTags({arg})={tagsForArg} to myTags");
+        if tagsForArg != None: myTags |= tagsForArg;
 
 
-print(f"{set(listTagNames(myTags))}")
+print(f"{listTagNames(myTags)}")

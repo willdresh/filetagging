@@ -10,8 +10,6 @@ exec(compile(open(dbqFilename).read(),dbqFilename,'exec')) #this is a "#include"
 at_auxFilename='aux_addtag.py'
 exec(compile(open(at_auxFilename).read(),at_auxFilename,'exec')) #this is a "#include" directive
 
-getStandardizedFile=os.path.abspath
-getStandardizedDirectory=os.path.dirname
 
 ###########################################
 ### BEGIN COMMAND LINE INPUT VALIDATION ###

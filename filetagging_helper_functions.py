@@ -1,6 +1,9 @@
 import sys
 import mysql.connector.errors
 
+getStandardizedFile=os.path.abspath
+getStandardizedDirectory=os.path.dirname
+
 def reportError(msg):
     sys.stderr.write(msg)
 

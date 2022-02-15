@@ -90,10 +90,18 @@ def getTagName(tagId):
     return res;
 
 
+# Default action when file was not found in the database: do nothing
+def default_FileNotInDatabase(exc=None):
+    return None;
+
 d_dbg_getFileID=False
-def getFileID(fileName):
-    query=queryDatabase(f"SELECT id FROM TAGGED_FILES WHERE name='{fileName}';",
-            lambda cnx, cur: cur.fetchone())
+def getFileID(fileName, callback_FileNotInDatabase=default_FileNotInDatabase):
+    query=queryDatabase(
+            f"SELECT id FROM TAGGED_FILES WHERE name='{fileName}';",
+            lambda cnx, cur: cur.fetchone(),
+            mysql.connector.errors.Error,
+            callback_FileNotInDatabase
+            )
 
     res = None
 
