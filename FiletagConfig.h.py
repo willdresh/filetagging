@@ -49,6 +49,7 @@ class FiletagConfig:
             if self.dbType == FiletagConfig.DatabaseConfig.DatabaseType.MySQL:
                 if self.usePassword:
                     return mysql.connector.connect(user=self.username,password=self.password,host=self.host,database=self.dbName)
+                #else if self.dbType == SomeOtherType ...
                 else:
                     return mysql.connector.connect(user=self.username,host=self.host,database=self.dbName);
 
