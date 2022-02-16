@@ -1,0 +1,17 @@
+Filetagging Project! =D
+
+This is really just a little pet project of mine.
+
+I wanted a utility for tagging files in GNU/Linux, but after an exhaustive (read: 5-minute) Google search, I couldn't find such a utility to suit my needs.
+
+So I decided to make one.
+
+I also decided to make it using Python - a language I'm minimally familiar with. Just for kicks, you know?
+And MySQL - a technology I haven't used for quite a while.
+
+I'm sure it shows signs of my unfamiliarity with Python - for instance, my use of coding voodoo (involving "compile" and "exec" calls) near the top of nearly every file in order to achieve the equivalent of a C++ #include directive; I'm sure this isn't the Python way of doing things so I'd love to see it improved by someone with the time and patience to do so!
+
+Really I designed this just for me, but if someone out there finds it useful and wants to contribute, please do drop me a line on GitHub!
+
+Have a fantastic day.
+
