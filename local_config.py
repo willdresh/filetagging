@@ -5,8 +5,8 @@ filetagConfigFilename='FiletagConfig.h.py'
 exec(compile(open(filetagConfigFilename).read(),filetagConfigFilename,'exec'))
 
 myLocalConfig=FiletagConfig(
-        FiletagConfig.DatabaseConfig(
-            FiletagConfig.DatabaseConfig.DatabaseType.MySQL,
+        _dbConfig=DatabaseConfig(
+            DatabaseConfig.DatabaseType.MySQL,
             "filetagging",
             "ragnar",
             "localhost")

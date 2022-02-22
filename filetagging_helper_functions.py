@@ -5,6 +5,10 @@ getStandardizedFile=os.path.abspath
 getStandardizedDirectory=os.path.dirname
 chkValidFileStandardized=os.path.isfile
 
+def getInode(path):
+    s=os.lstat(path);
+    return s.st_ino
+
 def reportError(msg):
     sys.stderr.write(msg)
 

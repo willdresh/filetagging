@@ -54,7 +54,7 @@ class DatabaseConfig:
     def Connect(self):
 
 
-        if self.dbType == FiletagConfig.DatabaseConfig.DatabaseType.MySQL:
+        if self.dbType == DatabaseConfig.DatabaseType.MySQL:
             if self.usePassword:
                 return mysql.connector.connect(user=self.username,password=self.password,host=self.host,database=self.dbName)
             else:
@@ -71,7 +71,7 @@ class FiletagConfig:
     hltConfig=HardlinkTrackingConfig();
 
     def __init__(self,
-            _dbConfig=DatabaseConfig(),
+            _dbConfig,
             _useHardlinkTracking=True,
             _hltConfig=HardlinkTrackingConfig()):
         self.dbConfig=_dbConfig;

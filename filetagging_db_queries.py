@@ -95,11 +95,10 @@ def getTagName(tagId):
 
     return res;
 
-
 d_dbg_getFileID=False
 def getFileID(fileName):
     query=queryDatabase(
-            f"SELECT id FROM TAGGED_FILES WHERE name='{fileName}';",
+            f"SELECT id FROM TAGGED_FILES WHERE inode='{getInode(fileName)}';",
             lambda cnx, cur: cur.fetchone(),
             )
 
@@ -113,17 +112,34 @@ def getFileID(fileName):
 
     return res
 
-d_dbg_addFile=False
+d_dbg_addFile=True
 def addFile(fileName):
-    query=queryDatabase(f"INSERT INTO TAGGED_FILES VALUES (NULL, '{fileName}');",
+    query_s=f"INSERT INTO TAGGED_FILES VALUES (NULL, '{fileName}','{getInode(fileName)}')"
+    if d_dbg_all or d_dbg_addFile:
+        print(f"addFile({fileName})\n\tQuery: {query_s}");
+
+    query=queryDatabase(query_s,
         lambda cnx, cur: cnx.commit())
 
     res=getFileID(fileName)
 
     if d_dbg_all or d_dbg_addFile:
-        print(f"Result of addFile({fileName})= {res}")
+        print(f"\tResult= {res}")
 
     return res
+
+#Pre-Migration5
+#(no inode column in database)
+#def addFile(fileName):
+    #query=queryDatabase(f"INSERT INTO TAGGED_FILES VALUES (NULL, '{fileName}');",
+        #lambda cnx, cur: cnx.commit())
+#
+    #res=getFileID(fileName)
+#
+    #if d_dbg_all or d_dbg_addFile:
+        #print(f"Result of addFile({fileName})= {res}")
+#
+    #return res
 
 d_dbg_getDirID=False
 def getDirID(dirPath):
