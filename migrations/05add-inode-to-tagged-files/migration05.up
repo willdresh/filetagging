@@ -1,0 +1,4 @@
+USE filetagging;
+ALTER TABLE TAGGED_FILES
+ADD inode varchar(255);
+

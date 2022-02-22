@@ -8,6 +8,10 @@ chkValidFileStandardized=os.path.isfile
 def reportError(msg):
     sys.stderr.write(msg)
 
+def handlePermissionDenied(permissionToDo, additionalInfo=None):
+    print(f"Permission denied to perform {permissionToDo}")
+    if additionalInfo != None and FILETAG_VERBOSE: print(additionalInfo)
+
 def handleInvalidArguments(msg="",thenExit=True,exitCode=1):
     reportError(f"{sys.argv[0]}: Invalid Arguments\n")
     reportError(f"Syntax error: {msg}\n")

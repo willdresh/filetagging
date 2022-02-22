@@ -1,0 +1,3 @@
+USE filetagging;
+ALTER TABLE TAGGED_FILES
+	ADD CONSTRAINT UC_inode UNIQUE(inode)

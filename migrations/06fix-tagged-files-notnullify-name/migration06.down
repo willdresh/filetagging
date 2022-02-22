@@ -1,0 +1,4 @@
+USE filetagging;
+
+ALTER TABLE TAGGED_FILES
+	DROP CONSTRAINT UC_inode;

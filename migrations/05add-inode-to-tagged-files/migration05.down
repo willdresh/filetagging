@@ -1,0 +1,5 @@
+
+USE filetagging;
+ALTER TABLE TAGGED_FILES
+DROP COLUMN inode;
+
